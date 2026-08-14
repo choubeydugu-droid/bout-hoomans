@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HUMAN / BECOMING — The Science of Human Development</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ==========================================
+       CSS VARIABLES & BASE STYLES
+       ========================================== */
+    :root {
+      --bg-dark: #090a0f;
+      --bg-card: rgba(18, 22, 33, 0.75);
+      --bg-card-hover: rgba(28, 34, 50, 0.85);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --accent-cyan: #00f2fe;
+      --accent-purple: #7928ca;
+      --accent-pink: #ff0080;
+      --accent-gold: #ffb703;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --font-heading: 'Cinzel', serif;
+      --font-body: 'Inter', sans-serif;
+      --font-code: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(121, 40, 202, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 85% 60%, rgba(0, 242, 254, 0.12) 0%, transparent 40%);
+      background-attachment: fixed;
+    }
+
+    /* TYPOGRAPHY */
+    h1, h2, h3, h4 {
+      font-family: var(--font-heading);
+      letter-spacing: 0.05em;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple), var(--accent-pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* NAVIGATION */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      background: rgba(9, 10, 15, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 3rem;
+    }
+
+    .logo {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 1.2rem;
+      letter-spacing: 0.2em;
+      color: var(--text-main);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    /* LAYOUT CONTAINERS */
+    section {
+      padding: 6rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .section-title h2 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-title p {
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* HERO SECTION */
+    .hero {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding-top: 4rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      margin-bottom: 1.5rem;
+      line-height: 1.1;
+    }
+
+    .hero p.subtitle {
+      font-size: 1.5rem;
+      color: var(--text-muted);
+      max-width: 800px;
+      margin-bottom: 2.5rem;
+      font-weight: 300;
+    }
+
+    .cta-btn {
+      padding: 0.8rem 2rem;
+      border-radius: 30px;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: inline-block;
+      border: none;
+      cursor: pointer;
+    }
+
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0, 242, 254, 0.3);
+    }
+
+    /* INTERACTIVE TIMELINE */
+    .timeline-nav {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+
+    .timeline-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .timeline-btn:hover, .timeline-btn.active {
+      background: rgba(0, 242, 254, 0.1);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+
+    .timeline-content {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2.5rem;
+      backdrop-filter: blur(10px);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .timeline-card {
+      background: rgba(255, 255, 255, 0.02);
+      border-left: 3px solid var(--accent-cyan);
+      padding: 1.2rem;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .timeline-card h4 {
+      color: var(--accent-cyan);
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+    }
+
+    /* WHAT SHAPES US */
+    .influences-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+
+    .influence-chip {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 1.2rem 1rem;
+      border-radius: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .influence-chip:hover, .influence-chip.active {
+      border-color: var(--accent-purple);
+      background: rgba(121, 40, 202, 0.15);
+      transform: translateY(-3px);
+    }
+
+    .influence-detail {
+      margin-top: 2rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 2rem;
+      border-radius: 16px;
+      min-height: 120px;
+    }
+
+    /* POST-COVID SECTION */
+    .post-covid-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .covid-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 1.8rem;
+      border-radius: 16px;
+      transition: transform 0.3s ease;
+    }
+
+    .covid-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .covid-card h3 {
+      color: var(--accent-pink);
+      margin-bottom: 0.8rem;
+    }
+
+    /* QUIZ SECTION */
+    .quiz-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 2.5rem;
+      border-radius: 16px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .quiz-option {
+      display: block;
+      width: 100%;
+      padding: 1rem;
+      margin: 0.8rem 0;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      border-radius: 8px;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .quiz-option:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .quiz-feedback {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      display: none;
+    }
+
+    /* EXPERIMENTS SECTION */
+    .experiments-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .exp-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 1.8rem;
+      border-radius: 16px;
+      text-align: center;
+    }
+
+    .exp-box {
+      height: 120px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      margin: 1rem 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      font-weight: 600;
+      transition: background 0.2s ease;
+    }
+
+    .disclaimer {
+      background: rgba(255, 183, 3, 0.1);
+      border: 1px solid var(--accent-gold);
+      color: var(--accent-gold);
+      padding: 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    /* SOURCES SECTION */
+    .sources-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+
+    .sources-list li {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .sources-list strong {
+      color: var(--text-main);
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 3rem;
+      border-top: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav { padding: 1rem; }
+      .nav-links { display: none; }
+      section { padding: 4rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="#" class="logo">HUMAN / BECOMING</a>
+    <ul class="nav-links">
+      <li><a href="#timeline">Timeline</a></li>
+      <li><a href="#influences">What Shapes Us</a></li>
+      <li><a href="#post-covid">Post-COVID Era</a></li>
+      <li><a href="#quiz">Myth vs Science</a></li>
+      <li><a href="#experiments">Labs</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ul>
+  </nav>
+
+  <section class="hero">
+    <h1 class="gradient-text">HUMAN / BECOMING</h1>
+    <p class="subtitle">Why do we become who we are?</p>
+    <p style="max-width: 650px; color: var(--text-muted); margin-bottom: 2rem;">
+      An interactive digital exploration into human development, neurobiology, and psychological evolution across the lifespan.
+    </p>
+    <a href="#timeline" class="cta-btn">Begin Exploration</a>
+  </section>
+
+  <section id="timeline">
+    <div class="section-title">
+      <h2>The Lifespan Arc</h2>
+      <p>Select a developmental stage to explore how biology and mind transform over time.</p>
+    </div>
+
+    <div class="timeline-nav" id="stage-buttons">
+      </div>
+
+    <div class="timeline-content" id="stage-details">
+      </div>
+  </section>
+
+  <section id="influences">
+    <div class="section-title">
+      <h2>What Shapes Us?</h2>
+      <p>Human behavior is a complex, dynamic interplay of biology, environment, and culture.</p>
+    </div>
+
+    <div class="influences-grid" id="influences-chips">
+      </div>
+
+    <div class="influence-detail" id="influence-display">
+      <h3 style="color: var(--accent-cyan); margin-bottom: 0.5rem;" id="inf-title">Click a factor above</h3>
+      <p id="inf-desc" style="color: var(--text-muted);">Explore how genetics, neural mechanisms, social dynamics, and technology interact to mold individual identity.</p>
+    </div>
+  </section>
+
+  <section id="post-covid">
+    <div class="section-title">
+      <h2>Why Does the Post-COVID Era Feel Dull?</h2>
+      <p>Examining psychological, social, and developmental reasons why some adolescents report feeling a sense of emotional dynamic loss post-pandemic.</p>
+    </div>
+
+    <div class="post-covid-grid">
+      <div class="covid-card">
+        <h3>Disrupted Adolescence</h3>
+        <p>Adolescence is a critical window for neural synaptic pruning and autonomy testing. Lockdowns disrupted key social milestones during peak developmental neuroplasticity.</p>
+      </div>
+
+      <div class="covid-card">
+        <h3>Novelty Deprivation</h3>
+        <p>Dopaminergic pathways thrive on unexpected rewards and novelty. Long periods of physical isolation reduced environmental complexity, dulling novelty response mechanisms.</p>
+      </div>
+
+      <div class="covid-card">
+        <h3>Digital Over-Saturation</h3>
+        <p>Rapid shift to screen-mediated interaction altered social signaling. High digital media consumption can alter baseline reward thresholds, making real-world stimuli feel less intense.</p>
+      </div>
+
+      <div class="covid-card">
+        <h3>Social Readjustment Fatigue</h3>
+        <p>Re-entry into dense social environments requires intense cognitive effort. Social anxiety and sensory overload can induce self-protective psychological withdrawal or blunting.</p>
+      </div>
+
+      <div class="covid-card">
+        <h3>Nostalgia & Memory Distortion</h3>
+        <p>Youth often view pre-pandemic years through nostalgia. Comparing actual present challenges with idealized pre-COVID memories heightens current dissatisfaction.</p>
+      </div>
+
+      <div class="covid-card">
+        <h3>Individual Variation</h3>
+        <p>Scientifically, experiences vary widely. While some youth experienced burnout or emotional flattening, others demonstrated resilience, new skills, or closer family bonding.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="quiz">
+    <div class="section-title">
+      <h2>Myth or Science?</h2>
+      <p>Test your understanding of psychological science and neurobiology.</p>
+    </div>
+
+    <div class="quiz-container">
+      <div id="quiz-box">
+        <h3 id="quiz-question" style="margin-bottom: 1.5rem;">Loading question...</h3>
+        <button class="quiz-option" onclick="checkAnswer(true)">True / Science</button>
+        <button class="quiz-option" onclick="checkAnswer(false)">False / Myth</button>
+        <div id="quiz-feedback" class="quiz-feedback"></div>
+        <button id="next-btn" class="cta-btn" style="display:none; margin-top: 1.5rem; width: 100%;" onclick="nextQuestion()">Next Question</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="experiments">
+    <div class="section-title">
+      <h2>Behavioral Demonstrations</h2>
+      <p>Explore mini-cognitive tasks in real-time.</p>
+    </div>
+
+    <div class="disclaimer">
+      <strong>Note:</strong> These tests are simple illustrative demonstrations for educational purposes, NOT diagnostic tools for clinical evaluation.
+    </div>
+
+    <div class="experiments-grid">
+      <div class="exp-card">
+        <h3>Reaction Time</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted);">Tests visual stimulus response speed.</p>
+        <div class="exp-box" id="reaction-box" onclick="handleReactionClick()">Click "Start" to Begin</div>
+        <p id="reaction-result" style="font-family: var(--font-code); font-size: 0.9rem; color: var(--accent-cyan);"></p>
+      </div>
+
+      <div class="exp-card">
+        <h3>Working Memory</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted);">Remember a sequence of numbers.</p>
+        <div class="exp-box" id="memory-box" onclick="startMemoryTest()">Click to Start Test</div>
+        <p id="memory-result" style="font-family: var(--font-code); font-size: 0.9rem; color: var(--accent-cyan);"></p>
+      </div>
+
+      <div class="exp-card">
+        <h3>Time Perception</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted);">Estimate a 5-second interval blindly.</p>
+        <div class="exp-box" id="time-box" onclick="handleTimeClick()">Click to Begin Timing</div>
+        <p id="time-result" style="font-family: var(--font-code); font-size: 0.9rem; color: var(--accent-cyan);"></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="sources">
+    <div class="section-title">
+      <h2>Scientific References</h2>
+      <p>Grounded in developmental psychology, neuroscience, and public health literature.</p>
+    </div>
+
+    <ul class="sources-list">
+      <li><strong>American Psychological Association (APA):</strong> Lifespan Development and Adolescent Brain Research.</li>
+      <li><strong>National Institutes of Health (NIH):</strong> Adolescent Brain Cognitive Development (ABCD) Study.</li>
+      <li><strong>World Health Organization (WHO):</strong> Adolescent Mental Health & Global Pandemic Impact Reports.</li>
+      <li><strong>Centers for Disease Control and Prevention (CDC):</strong> Youth Risk Behavior Surveillance System (YRBSS).</li>
+      <li><strong>Peer-Reviewed Research:</strong> Studies from <em>Nature Human Behaviour</em>, <em>Developmental Psychology</em>, and <em>Neuron</em>.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <p>&copy; 2026 HUMAN / BECOMING. Built for educational exploration.</p>
+  </footer>
+
+  <script>
+    /* ==========================================
+       DATA: TIMELINE STAGES
+       ========================================== */
+    const timelineData = [
+      {
+        id: "infancy",
+        stage: "Infancy (0-2 yrs)",
+        brain: "Rapid synaptogenesis; sensory and motor cortical development.",
+        hormones: "Oxytocin pathways build attachment bonds during caregiver interactions.",
+        emotions: "Basic emotional states (distress, interest, pleasure); emerging emotional regulation.",
+        thinking: "Sensorimotor stage; development of object permanence.",
+        friendships: "Parallel play; primary social focus is caregivers.",
+        identity: "Emerging self-recognition (mirror test milestone around 18-24 months).",
+        independence: "Transitioning from complete dependency to motor locomotion (walking/crawling)."
+      },
+      {
+        id: "childhood",
+        stage: "Childhood (3-11 yrs)",
+        brain: "Myelination accelerates; prefrontal connections strengthen language and logic.",
+        hormones: "Adrenarche (~8-10 yrs) triggers early adrenal hormone releases.",
+        emotions: "Improved emotional naming and basic self-control strategies.",
+        thinking: "Preoperational to concrete operational thinking; logic improves.",
+        friendships: "Cooperative play, peer bonds based on shared activities.",
+        identity: "Self-concept defined by tangible traits and skills.",
+        independence: "Gradual autonomy in daily tasks (dressing, choice-making)."
+      },
+      {
+        id: "adolescence",
+        stage: "Adolescence (12-18 yrs)",
+        brain: "Limbic system matures faster than prefrontal cortex (reward-seeking asymmetry).",
+        hormones: "Gonadal surge (estrogen/testosterone) initiates puberty and body transformation.",
+        emotions: "Heightened emotional intensity and sensitivity to peer feedback.",
+        thinking: "Formal operational thought; abstract thinking and hypothetical reasoning.",
+        friendships: "Peer hierarchy becomes central; deep emotional intimacy and group dynamics.",
+        identity: "Identity vs. Role Confusion; exploring personal values and belief systems.",
+        independence: "Striving for psychological and social autonomy from parents."
+      },
+      {
+        id: "young-adulthood",
+        stage: "Young Adulthood (19-29 yrs)",
+        brain: "Prefrontal cortex reaches structural maturation (~age 25).",
+        hormones: "Reproductive hormones plateau; stress axis (HPA) dynamics stabilize.",
+        emotions: "Higher emotional stability, impulse control, and stress management.",
+        thinking: "Post-formal thought; pragmatic reasoning and nuance appreciation.",
+        friendships: "Focus shifts to quality over quantity; romantic partnerships emerge.",
+        identity: "Consolidation of career, personal values, and long-term trajectory.",
+        independence: "Financial, spatial, and domestic independence."
+      },
+      {
+        id: "adulthood",
+        stage: "Middle Adulthood (30-65 yrs)",
+        brain: "Stable cognitive performance; gradual changes in processing speed.",
+        hormones: "Mid-life hormonal shifts (e.g., menopause, gradual decline in testosterone).",
+        emotions: "Generativity focus; higher emotional regulation and perspective.",
+        thinking: "Crystallized intelligence peaks; deep domain expertise.",
+        friendships: "Network narrows to deep, stable relationships and family units.",
+        identity: "Refining sense of purpose, mentorship, and personal legacy.",
+        independence: "Peak autonomy, balancing care for younger and older generations."
+      },
+      {
+        id: "older-age",
+        stage: "Older Age (65+ yrs)",
+        brain: "Structural changes; neural plasticity remains active through learning.",
+        hormones: "Hormonal shifts stabilize at baseline mature levels.",
+        emotions: "Socioemotional selectivity theory: prioritizing emotionally meaningful states.",
+        thinking: "Maintained wisdom and experiential knowledge; processing speed slows.",
+        friendships: "High value on deep, long-standing familial and peer connections.",
+        identity: "Integrity vs. Despair; reflecting on life journey and achievements.",
+        independence: "Adapting independence strategies around physical health."
+      }
+    ];
+
+    /* ==========================================
+       DATA: INFLUENCES
+       ========================================== */
+    const influenceData = {
+      Genetics: "Provides the foundational biological blueprint, influencing temperament traits, predisposition to conditions, and baseline biological timing.",
+      Brain: "Neural circuitry, neurotransmitter systems (dopamine, serotonin), and structural connectivity directly process information and drive behavior.",
+      Hormones: "Chemical messengers like cortisol, testosterone, oxytocin, and estrogen modulate mood, stress responses, social bonding, and physical development.",
+      Family: "Primary attachment figures shape early emotional regulation, safety norms, beliefs, and behavioral modeling.",
+      Peers: "Friends and social circles heavily influence identity formation, risk-taking, norms, and emotional support, especially in adolescence.",
+      Culture: "Defines societal norms, values, moral frameworks, and expectations regarding milestones and behavior.",
+      Education: "Shapes executive functions, critical thinking abilities, literacy, and structured social collaboration.",
+      Environment: "Physical surroundings, climate, urban design, and exposure to nature impact physical health, stress, and daily habits.",
+      Technology: "Digital tools alter communication habits, attention spans, reward pathways, and access to global information.",
+      Sleep: "Crucial for memory consolidation, neural toxin clearance, emotional stability, and physiological recovery.",
+      Nutrition: "Provides essential metabolic building blocks for neurotransmitters, energy production, and brain development.",
+      Stress: "Activates HPA-axis pathways. Chronic stress can alter neuroarchitecture, particularly in the amygdala and hippocampus.",
+      Experiences: "Unique life events (travel, challenges, victories) build cognitive schema and shape individual coping mechanisms.",
+      History: "Large socio-historical contexts (economic shifts, pandemics, technological eras) frame generational worldviews."
+    };
+
+    /* ==========================================
+       DATA: QUIZ
+       ========================================== */
+    const quizQuestions = [
+      {
+        q: "True or False: The human brain fully finishes developing around age 18.",
+        a: false,
+        exp: "Myth! Brain development, particularly in the prefrontal cortex responsible for decision-making, continues into the mid-20s (around age 25)."
+      },
+      {
+        q: "True or False: Adolescents naturally experience a shift in their circadian rhythm making them sleep later.",
+        a: true,
+        exp: "Science! During puberty, melatonin release is delayed by approximately 2 hours, naturally pushing sleep phase preferences later."
+      },
+      {
+        q: "True or False: Adults lose neurons constantly and cannot generate new brain cells.",
+        a: false,
+        exp: "Myth! Neurogenesis (the creation of new neurons) continues throughout adulthood, particularly in the hippocampus."
+      }
+    ];
+
+    /* ==========================================
+       LOGIC: TIMELINE RENDER
+       ========================================== */
+    function renderTimeline() {
+      const btnNav = document.getElementById('stage-buttons');
+      btnNav.innerHTML = '';
+
+      timelineData.forEach((item, index) => {
+        const btn = document.createElement('button');
+        btn.className = `timeline-btn ${index === 2 ? 'active' : ''}`;
+        btn.innerText = item.stage.split(' ')[0];
+        btn.onclick = () => loadStage(index);
+        btnNav.appendChild(btn);
+      });
+
+      loadStage(2); // Default to Adolescence
+    }
+
+    function loadStage(index) {
+      const data = timelineData[index];
+      const buttons = document.querySelectorAll('.timeline-btn');
+      buttons.forEach((btn, i) => {
+        btn.classList.toggle('active', i === index);
+      });
+
+      const display = document.getElementById('stage-details');
+      display.innerHTML = `
+        <div class="timeline-card"><h4>Brain Development</h4><p>${data.brain}</p></div>
+        <div class="timeline-card"><h4>Hormones & Puberty</h4><p>${data.hormones}</p></div>
+        <div class="timeline-card"><h4>Emotions</h4><p>${data.emotions}</p></div>
+        <div class="timeline-card"><h4>Thinking & Decisions</h4><p>${data.thinking}</p></div>
+        <div class="timeline-card"><h4>Friendships & Social</h4><p>${data.friendships}</p></div>
+        <div class="timeline-card"><h4>Identity</h4><p>${data.identity}</p></div>
+        <div class="timeline-card" style="grid-column: 1 / -1;"><h4>Independence</h4><p>${data.independence}</p></div>
+      `;
+    }
+
+    /* ==========================================
+       LOGIC: INFLUENCES RENDER
+       ========================================== */
+    function renderInfluences() {
+      const container = document.getElementById('influences-chips');
+      container.innerHTML = '';
+
+      Object.keys(influenceData).forEach((key, index) => {
+        const chip = document.createElement('div');
+        chip.className = `influence-chip ${index === 0 ? 'active' : ''}`;
+        chip.innerText = key;
+        chip.onclick = () => selectInfluence(key, chip);
+        container.appendChild(chip);
+      });
+    }
+
+    function selectInfluence(key, element) {
+      document.querySelectorAll('.influence-chip').forEach(c => c.classList.remove('active'));
+      element.classList.add('active');
+
+      document.getElementById('inf-title').innerText = key;
+      document.getElementById('inf-desc').innerText = influenceData[key];
+    }
+
+    /* ==========================================
+       LOGIC: QUIZ
+       ========================================== */
+    let currentQuizIndex = 0;
+
+    function loadQuiz() {
+      const q = quizQuestions[currentQuizIndex];
+      document.getElementById('quiz-question').innerText = q.q;
+      const fb = document.getElementById('quiz-feedback');
+      fb.style.display = 'none';
+      document.getElementById('next-btn').style.display = 'none';
+    }
+
+    function checkAnswer(userChoice) {
+      const q = quizQuestions[currentQuizIndex];
+      const fb = document.getElementById('quiz-feedback');
+      fb.style.display = 'block';
+
+      if (userChoice === q.a) {
+        fb.style.background = 'rgba(0, 242, 254, 0.15)';
+        fb.style.color = 'var(--accent-cyan)';
+        fb.innerText = `Correct! ${q.exp}`;
+      } else {
+        fb.style.background = 'rgba(255, 0, 128, 0.15)';
+        fb.style.color = 'var(--accent-pink)';
+        fb.innerText = `Incorrect. ${q.exp}`;
+      }
+
+      document.getElementById('next-btn').style.display = 'block';
+    }
+
+    function nextQuestion() {
+      currentQuizIndex = (currentQuizIndex + 1) % quizQuestions.length;
+      loadQuiz();
+    }
+
+    /* ==========================================
+       LOGIC: EXPERIMENTS
+       ========================================== */
+    // 1. REACTION TIME
+    let reactionState = 'idle'; // idle, waiting, ready
+    let reactionTimeout;
+    let startTime;
+
+    function handleReactionClick() {
+      const box = document.getElementById('reaction-box');
+      const result = document.getElementById('reaction-result');
+
+      if (reactionState === 'idle') {
+        reactionState = 'waiting';
+        box.innerText = 'Wait for GREEN...';
+        box.style.background = 'rgba(255, 183, 3, 0.3)';
+        result.innerText = '';
+
+        const delay = Math.floor(Math.random() * 2000) + 2000;
+        reactionTimeout = setTimeout(() => {
+          reactionState = 'ready';
+          box.innerText = 'CLICK NOW!';
+          box.style.background = 'rgba(0, 242, 254, 0.5)';
+          startTime = Date.now();
+        }, delay);
+      } else if (reactionState === 'waiting') {
+        clearTimeout(reactionTimeout);
+        reactionState = 'idle';
+        box.innerText = 'Too early! Click to try again.';
+        box.style.background = 'rgba(255, 0, 128, 0.3)';
+      } else if (reactionState === 'ready') {
+        const elapsed = Date.now() - startTime;
+        reactionState = 'idle';
+        box.innerText = 'Click to Start';
+        box.style.background = 'rgba(255, 255, 255, 0.05)';
+        result.innerText = `Reaction Time: ${elapsed} ms`;
+      }
+    }
+
+    // 2. WORKING MEMORY
+    let memorySequence = [];
+    function startMemoryTest() {
+      const box = document.getElementById('memory-box');
+      const result = document.getElementById('memory-result');
+      result.innerText = '';
+      
+      memorySequence = Array.from({length: 5}, () => Math.floor(Math.random() * 10));
+      box.innerText = `Memorize: ${memorySequence.join(' ')}`;
+      
+      setTimeout(() => {
+        box.innerText = 'Sequence Hidden';
+        setTimeout(() => {
+          const userAns = prompt('Enter the 5-digit sequence (no spaces):');
+          if (userAns === memorySequence.join('')) {
+            result.innerText = 'Correct! Great memory recall.';
+          } else {
+            result.innerText = `Incorrect. Sequence was: ${memorySequence.join('')}`;
+          }
+          box.innerText = 'Click to Start Test';
+        }, 500);
+      }, 3000);
+    }
+
+    // 3. TIME PERCEPTION
+    let timeState = 'idle';
+    let timeStart;
+
+    function handleTimeClick() {
+      const box = document.getElementById('time-box');
+      const result = document.getElementById('time-result');
+
+      if (timeState === 'idle') {
+        timeState = 'timing';
+        timeStart = Date.now();
+        box.innerText = 'Click again when you think 5 SECONDS have passed!';
+        box.style.background = 'rgba(121, 40, 202, 0.3)';
+        result.innerText = '';
+      } else if (timeState === 'timing') {
+        const elapsed = (Date.now() - timeStart) / 1000;
+        timeState = 'idle';
+        box.innerText = 'Click to Begin Timing';
+        box.style.background = 'rgba(255, 255, 255, 0.05)';
+        const diff = Math.abs(elapsed - 5.0).toFixed(2);
+        result.innerText = `Estimated Time: ${elapsed.toFixed(2)}s (${diff}s off)`;
+      }
+    }
+
+    /* ==========================================
+       INITIALIZATION
+       ========================================== */
+    window.onload = () => {
+      renderTimeline();
+      renderInfluences();
+      loadQuiz();
+    };
+  </script>
+</body>
+</html>
