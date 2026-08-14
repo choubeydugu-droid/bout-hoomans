@@ -4,10 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HUMAN / BECOMING — The Science of Human Development</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
   <style>
     /* ==========================================
        CSS VARIABLES & BASE STYLES
@@ -15,7 +19,6 @@
     :root {
       --bg-dark: #090a0f;
       --bg-card: rgba(18, 22, 33, 0.75);
-      --bg-card-hover: rgba(28, 34, 50, 0.85);
       --border-color: rgba(255, 255, 255, 0.08);
       --accent-cyan: #00f2fe;
       --accent-purple: #7928ca;
@@ -204,6 +207,21 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1.5rem;
+    }
+
+    /* HORIZONTAL SCROLL TIMELINE FOR DESKTOPS */
+    @media (min-width: 900px) {
+      .timeline-content {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        gap: 2rem;
+        padding-bottom: 1.5rem;
+      }
+      .timeline-card {
+        min-width: 320px;
+        scroll-snap-align: start;
+      }
     }
 
     .timeline-card {
@@ -418,25 +436,39 @@
       <p>Select a developmental stage to explore how biology and mind transform over time.</p>
     </div>
 
-    <div class="timeline-nav" id="stage-buttons">
-      </div>
+    <div class="timeline-nav" id="stage-buttons"></div>
 
-    <div class="timeline-content" id="stage-details">
-      </div>
+    <div class="timeline-content" id="stage-details"></div>
   </section>
 
   <section id="influences">
     <div class="section-title">
       <h2>What Shapes Us?</h2>
-      <p>Human behavior is a complex, dynamic interplay of biology, environment, and culture.</p>
+      <p>Human behavior is a complex interplay of biology, environment, and dynamic neural systems.</p>
     </div>
 
-    <div class="influences-grid" id="influences-chips">
+    <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 1.5rem; margin-bottom: 3rem; text-align: center;">
+      <h3 style="color: var(--accent-cyan); margin-bottom: 0.5rem;">3D Interactive Neural Model</h3>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">Click and drag to rotate the brain. Click region buttons to highlight functional areas.</p>
+      
+      <div id="brain-container" style="width: 100%; height: 350px; background: rgba(0,0,0,0.3); border-radius: 12px; position: relative; overflow: hidden;"></div>
+      
+      <div style="margin-top: 1rem; display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
+        <button class="timeline-btn" onclick="highlightBrain('prefrontal')">Prefrontal Cortex</button>
+        <button class="timeline-btn" onclick="highlightBrain('amygdala')">Amygdala</button>
+        <button class="timeline-btn" onclick="highlightBrain('hippocampus')">Hippocampus</button>
+        <button class="timeline-btn" onclick="highlightBrain('reset')">Reset View</button>
       </div>
+      <p id="brain-info" style="margin-top: 1rem; font-size: 0.95rem; color: var(--accent-cyan); font-family: var(--font-code);"></p>
+    </div>
+
+    <div class="influences-grid" id="influences-chips"></div>
 
     <div class="influence-detail" id="influence-display">
-      <h3 style="color: var(--accent-cyan); margin-bottom: 0.5rem;" id="inf-title">Click a factor above</h3>
-      <p id="inf-desc" style="color: var(--text-muted);">Explore how genetics, neural mechanisms, social dynamics, and technology interact to mold individual identity.</p>
+      <h3 style="color: var(--accent-cyan); margin-bottom: 0.5rem;" id="inf-title">Select a factor above</h3>
+      <div id="inf-desc" style="color: var(--text-muted);">
+        Click on any factor to explore its biological mechanisms, developmental windows, and real-world impacts.
+      </div>
     </div>
   </section>
 
@@ -623,23 +655,49 @@
     ];
 
     /* ==========================================
-       DATA: INFLUENCES
+       DATA: EXPANDED INFLUENCES
        ========================================== */
     const influenceData = {
-      Genetics: "Provides the foundational biological blueprint, influencing temperament traits, predisposition to conditions, and baseline biological timing.",
-      Brain: "Neural circuitry, neurotransmitter systems (dopamine, serotonin), and structural connectivity directly process information and drive behavior.",
-      Hormones: "Chemical messengers like cortisol, testosterone, oxytocin, and estrogen modulate mood, stress responses, social bonding, and physical development.",
-      Family: "Primary attachment figures shape early emotional regulation, safety norms, beliefs, and behavioral modeling.",
-      Peers: "Friends and social circles heavily influence identity formation, risk-taking, norms, and emotional support, especially in adolescence.",
-      Culture: "Defines societal norms, values, moral frameworks, and expectations regarding milestones and behavior.",
-      Education: "Shapes executive functions, critical thinking abilities, literacy, and structured social collaboration.",
-      Environment: "Physical surroundings, climate, urban design, and exposure to nature impact physical health, stress, and daily habits.",
-      Technology: "Digital tools alter communication habits, attention spans, reward pathways, and access to global information.",
-      Sleep: "Crucial for memory consolidation, neural toxin clearance, emotional stability, and physiological recovery.",
-      Nutrition: "Provides essential metabolic building blocks for neurotransmitters, energy production, and brain development.",
-      Stress: "Activates HPA-axis pathways. Chronic stress can alter neuroarchitecture, particularly in the amygdala and hippocampus.",
-      Experiences: "Unique life events (travel, challenges, victories) build cognitive schema and shape individual coping mechanisms.",
-      History: "Large socio-historical contexts (economic shifts, pandemics, technological eras) frame generational worldviews."
+      Genetics: {
+        mechanism: "DNA sequence variations (SNPs) define cellular blueprints and biological baselines.",
+        window: "Conception through entire lifespan (epigenetic triggers throughout life).",
+        impact: "Influences baseline temperament, sensory sensitivity, and predispositions to neurological traits."
+      },
+      Brain: {
+        mechanism: "Neural circuitry, synaptic density, and neurotransmitter balance (dopamine, serotonin).",
+        window: "Critical developmental spikes in early childhood and adolescent pruning.",
+        impact: "Directly governs executive function, emotional regulation, impulse control, and learning capacity."
+      },
+      Hormones: {
+        mechanism: "Endocrine signaling (cortisol, oxytocin, testosterone, estrogen) altering neural activity.",
+        window: "Major surges during prenatal development, adrenarche, puberty, and mid-life transitions.",
+        impact: "Modulates social bonding, stress reactivity, physical maturation, and mood fluctuations."
+      },
+      Family: {
+        mechanism: "Primary attachment security, behavioral modeling, and developmental scaffolding.",
+        window: "Highest impact during infancy and early childhood (0-7 years).",
+        impact: "Establishes baseline trust, self-regulation strategies, and early social communication patterns."
+      },
+      Peers: {
+        mechanism: "Social evaluation mechanisms, group identity formation, and peer-reinforcement loops.",
+        window: "Peak impact during adolescence and young adulthood.",
+        impact: "Drives risk perception, autonomy differentiation from parents, and self-esteem calibration."
+      },
+      Culture: {
+        mechanism: "Shared belief systems, social norms, language structures, and institutional values.",
+        window: "Continuous exposure across the entire lifespan.",
+        impact: "Shapes moral reasoning, individualistic vs. collectivist orientation, and life goal priority."
+      },
+      Environment: {
+        mechanism: "Physical surroundings, nature access, pollution levels, urban density, and noise levels.",
+        window: "Continuous baseline effect across all ages.",
+        impact: "Affects nervous system arousal levels, stress hormone baselines, and physical recovery."
+      },
+      Technology: {
+        mechanism: "Digital reward loops, variable ratio notification schedules, and virtual interaction models.",
+        window: "Increasing impact from childhood onward; highest in youth.",
+        impact: "Alters attention distribution, dopamine sensitivity threshold, and social interaction formats."
+      }
     };
 
     /* ==========================================
@@ -696,7 +754,7 @@
         <div class="timeline-card"><h4>Thinking & Decisions</h4><p>${data.thinking}</p></div>
         <div class="timeline-card"><h4>Friendships & Social</h4><p>${data.friendships}</p></div>
         <div class="timeline-card"><h4>Identity</h4><p>${data.identity}</p></div>
-        <div class="timeline-card" style="grid-column: 1 / -1;"><h4>Independence</h4><p>${data.independence}</p></div>
+        <div class="timeline-card"><h4>Independence</h4><p>${data.independence}</p></div>
       `;
     }
 
@@ -714,14 +772,103 @@
         chip.onclick = () => selectInfluence(key, chip);
         container.appendChild(chip);
       });
+
+      const firstKey = Object.keys(influenceData)[0];
+      selectInfluence(firstKey, container.children[0]);
     }
 
     function selectInfluence(key, element) {
       document.querySelectorAll('.influence-chip').forEach(c => c.classList.remove('active'));
-      element.classList.add('active');
+      if(element) element.classList.add('active');
 
+      const data = influenceData[key];
       document.getElementById('inf-title').innerText = key;
-      document.getElementById('inf-desc').innerText = influenceData[key];
+      document.getElementById('inf-desc').innerHTML = `
+        <p style="margin-bottom: 0.8rem;"><strong>Biological/Social Mechanism:</strong> ${data.mechanism}</p>
+        <p style="margin-bottom: 0.8rem;"><strong>Peak Developmental Window:</strong> ${data.window}</p>
+        <p><strong>Real-World Impact:</strong> ${data.impact}</p>
+      `;
+    }
+
+    /* ==========================================
+       LOGIC: 3D BRAIN MODEL ENGINE
+       ========================================== */
+    let scene, camera, renderer, brainGroup;
+
+    function init3DBrain() {
+      const container = document.getElementById('brain-container');
+      if(!container) return;
+
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+      camera.position.z = 15;
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      container.appendChild(renderer.domElement);
+
+      const light = new THREE.DirectionalLight(0x00f2fe, 1);
+      light.position.set(10, 10, 10).normalize();
+      scene.add(light);
+      scene.add(new THREE.AmbientLight(0x404040, 2));
+
+      brainGroup = new THREE.Group();
+
+      const cortexGeo = new THREE.SphereGeometry(3, 32, 32);
+      const cortexMat = new THREE.MeshPhongMaterial({ color: 0x7928ca, wireframe: true, transparent: true, opacity: 0.6 });
+      const cortex = new THREE.Mesh(cortexGeo, cortexMat);
+      brainGroup.add(cortex);
+
+      const pfcGeo = new THREE.SphereGeometry(1.2, 16, 16);
+      const pfcMat = new THREE.MeshPhongMaterial({ color: 0x00f2fe, wireframe: true });
+      const pfc = new THREE.Mesh(pfcGeo, pfcMat);
+      pfc.position.set(0, 1, 2.2);
+      pfc.name = "prefrontal";
+      brainGroup.add(pfc);
+
+      const amygGeo = new THREE.SphereGeometry(0.7, 16, 16);
+      const amygMat = new THREE.MeshPhongMaterial({ color: 0xff0080, wireframe: true });
+      const amyg = new THREE.Mesh(amygGeo, amygMat);
+      amyg.position.set(-0.8, -0.5, 0.5);
+      amyg.name = "amygdala";
+      brainGroup.add(amyg);
+
+      const hippoGeo = new THREE.SphereGeometry(0.8, 16, 16);
+      const hippoMat = new THREE.MeshPhongMaterial({ color: 0xffb703, wireframe: true });
+      const hippo = new THREE.Mesh(hippoGeo, hippoMat);
+      hippo.position.set(0.8, -0.5, 0);
+      hippo.name = "hippocampus";
+      brainGroup.add(hippo);
+
+      scene.add(brainGroup);
+
+      const controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+
+      function animate() {
+        requestAnimationFrame(animate);
+        brainGroup.rotation.y += 0.003;
+        controls.update();
+        renderer.render(scene, camera);
+      }
+      animate();
+    }
+
+    function highlightBrain(region) {
+      const info = document.getElementById('brain-info');
+      if (region === 'prefrontal') {
+        brainGroup.rotation.set(0, 0, 0);
+        info.innerText = "Prefrontal Cortex: Responsible for planning, impulse control, and decision-making. Matures last (mid-20s).";
+      } else if (region === 'amygdala') {
+        brainGroup.rotation.set(0, 1.5, 0);
+        info.innerText = "Amygdala: The brain's emotional threat radar and driver of quick emotional responses.";
+      } else if (region === 'hippocampus') {
+        brainGroup.rotation.set(0, -1.5, 0);
+        info.innerText = "Hippocampus: Central hub for memory formation, spatial navigation, and learning.";
+      } else {
+        brainGroup.rotation.set(0, 0, 0);
+        info.innerText = "Interactive Mode: Click and drag the model above to explore from any angle.";
+      }
     }
 
     /* ==========================================
@@ -764,7 +911,7 @@
        LOGIC: EXPERIMENTS
        ========================================== */
     // 1. REACTION TIME
-    let reactionState = 'idle'; // idle, waiting, ready
+    let reactionState = 'idle';
     let reactionTimeout;
     let startTime;
 
@@ -854,6 +1001,7 @@
       renderTimeline();
       renderInfluences();
       loadQuiz();
+      init3DBrain();
     };
   </script>
 </body>
