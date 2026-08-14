@@ -592,6 +592,7 @@
        1. ANATOMICAL 3D BRAIN NET ENGINE (THREE.JS)
        ========================================== */
     let scene, camera, renderer, brainGroup, particleSystem;
+    let pfcMesh, limbicMesh, cerebellumMesh;
 
     function initHeroBrain() {
       const container = document.getElementById('hero-brain-container');
@@ -625,7 +626,6 @@
       const colorPink = new THREE.Color(0xff0080);
 
       for (let i = 0; i < particleCount; i++) {
-        // Anatomical Brain Shaping Math
         let u = Math.random();
         let v = Math.random();
         let theta = u * 2.0 * Math.PI;
@@ -639,11 +639,9 @@
         let y = ry * Math.cos(phi);
         let z = rz * Math.sin(phi) * Math.sin(theta);
 
-        // Separate Left and Right Hemispheres
         if (x > 0) x += 0.25;
         if (x < 0) x -= 0.25;
 
-        // Cerebellum & Brainstem Shaping
         if (y < -1.2 && z < -1.0) {
           x *= 0.6;
           y *= 0.8;
@@ -654,7 +652,6 @@
         positions[i * 3 + 1] = y;
         positions[i * 3 + 2] = z;
 
-        // Assign futuristic gradient colors
         let mixColor = (z > 1.5) ? colorCyan : ((y < -1) ? colorPink : colorPurple);
         colors[i * 3] = mixColor.r;
         colors[i * 3 + 1] = mixColor.g;
@@ -674,34 +671,40 @@
       particleSystem = new THREE.Points(geometry, particleMaterial);
       brainGroup.add(particleSystem);
 
-      // Add Inner Synaptic Wireframe Grid
-      const wireGeo = new THREE.IcosahedronGeometry(2.8, 3);
-      const wireMat = new THREE.MeshBasicMaterial({
-        color: 0x7928ca,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.15
-      });
-      const wireMesh = new THREE.Mesh(wireGeo, wireMat);
-      brainGroup.add(wireMesh);
+      // Distinct Interactive Wireframe Spheres for Highlighting
+      const pfcGeo = new THREE.SphereGeometry(1.2, 16, 16);
+      const pfcMat = new THREE.MeshPhongMaterial({ color: 0x00f2fe, wireframe: true, transparent: true, opacity: 0.5 });
+      pfcMesh = new THREE.Mesh(pfcGeo, pfcMat);
+      pfcMesh.position.set(0, 0.8, 2.5);
+      brainGroup.add(pfcMesh);
+
+      const limbicGeo = new THREE.SphereGeometry(1.0, 16, 16);
+      const limbicMat = new THREE.MeshPhongMaterial({ color: 0xff0080, wireframe: true, transparent: true, opacity: 0.5 });
+      limbicMesh = new THREE.Mesh(limbicGeo, limbicMat);
+      limbicMesh.position.set(0, -0.2, 0);
+      brainGroup.add(limbicMesh);
+
+      const cerebellumGeo = new THREE.SphereGeometry(1.1, 16, 16);
+      const cerebellumMat = new THREE.MeshPhongMaterial({ color: 0xffb703, wireframe: true, transparent: true, opacity: 0.5 });
+      cerebellumMesh = new THREE.Mesh(cerebellumGeo, cerebellumMat);
+      cerebellumMesh.position.set(0, -1.8, -2.0);
+      brainGroup.add(cerebellumMesh);
 
       scene.add(brainGroup);
 
-      // Orbit Controls for Mouse Dragging
+      // Orbit Controls
       const controls = new THREE.OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
       controls.enableZoom = false;
 
-      // Render Loop
       function animate() {
         requestAnimationFrame(animate);
-        brainGroup.rotation.y += 0.0025; // Gentle rotation
+        brainGroup.rotation.y += 0.0025;
         controls.update();
         renderer.render(scene, camera);
       }
       animate();
 
-      // Handle Resize
       window.addEventListener('resize', () => {
         camera.aspect = container.clientWidth / container.clientHeight;
         camera.updateProjectionMatrix();
@@ -709,17 +712,44 @@
       });
     }
 
+    // 5-SECOND BLINKING AND FADING HIGHLIGHT ENGINE
+    function triggerBrainBlink(targetMesh) {
+      if (!targetMesh) return;
+
+      const originalColor = targetMesh.material.color.getHex();
+      const glowingColor = 0x00f2fe; // Cyan flash
+      let isHighlighted = false;
+
+      // Start Blinking Every 200ms
+      const blinkInterval = setInterval(() => {
+        isHighlighted = !isHighlighted;
+        targetMesh.material.color.setHex(isHighlighted ? glowingColor : originalColor);
+        targetMesh.material.opacity = isHighlighted ? 1.0 : 0.3;
+      }, 200);
+
+      // Stop Blinking After 5 Seconds (5000ms)
+      setTimeout(() => {
+        clearInterval(blinkInterval);
+        targetMesh.material.color.setHex(originalColor);
+        targetMesh.material.opacity = 0.5;
+      }, 5000);
+    }
+
     function highlightBrain(region) {
       const info = document.getElementById('brain-info');
+      
       if (region === 'prefrontal') {
         brainGroup.rotation.set(0, 0, 0);
-        info.innerText = "Prefrontal Cortex: High-level executive functioning, decision-making, and impulse control (matures ~age 25).";
+        triggerBrainBlink(pfcMesh);
+        info.innerText = "Prefrontal Cortex: High-level executive functioning, decision-making, and impulse control (matures ~age 25). Blinking active...";
       } else if (region === 'amygdala') {
         brainGroup.rotation.set(0, 1.6, 0);
-        info.innerText = "Limbic System (Amygdala/Hippocampus): Core engine for emotional reactions, stress response, and memory consolidation.";
+        triggerBrainBlink(limbicMesh);
+        info.innerText = "Limbic System (Amygdala/Hippocampus): Core engine for emotional reactions, stress response, and memory. Blinking active...";
       } else if (region === 'cerebellum') {
         brainGroup.rotation.set(-0.5, 3.1, 0);
-        info.innerText = "Cerebellum & Brainstem: Regulates motor control, physical coordination, and fundamental autonomic body survival functions.";
+        triggerBrainBlink(cerebellumMesh);
+        info.innerText = "Cerebellum & Brainstem: Regulates motor control, physical coordination, and survival functions. Blinking active...";
       } else {
         brainGroup.rotation.set(0, 0, 0);
         info.innerText = "Interactive Mode: Click and drag the model above to rotate the 3D neural network in 360 degrees.";
@@ -833,18 +863,33 @@
     }
 
     /* ==========================================
-       3. DATA & LOGIC: INFLUENCES
+       3. DATA & LOGIC: EXPANDED INFLUENCES
        ========================================== */
     const influenceData = {
+      Neurotransmitters: {
+        mechanism: "Chemical messengers (Dopamine, Serotonin, GABA) transmitting signals across synaptic clefts.",
+        window: "Continuous operational baseline throughout life; shifts during developmental phases.",
+        impact: "Regulates mood stability, reward processing, motivation, and neural arousal levels."
+      },
+      HPA_Axis: {
+        mechanism: "The Hypothalamic-Pituitary-Adrenal pathway controlling body and brain cortisol production.",
+        window: "Highly sensitive during prenatal, early childhood, and adolescent stress exposures.",
+        impact: "Modulates stress reactivity, fear conditioning, immune regulation, and prefrontal control."
+      },
+      Epigenetics: {
+        mechanism: "Molecular tags (like DNA methylation) that turn genes on or off without altering raw DNA code.",
+        window: "Lifelong; peak sensitivity during early life, trauma, and major lifestyle transitions.",
+        impact: "Determines how environmental stressors directly influence gene expression and biological traits."
+      },
+      Synaptic_Pruning: {
+        mechanism: "Elimination of weaker neural connections while strengthening high-use pathways ('use it or lose it').",
+        window: "Major waves occur in early childhood and throughout adolescence.",
+        impact: "Increases brain efficiency and processing speed while cementing heavily practiced skills and habits."
+      },
       Genetics: {
         mechanism: "DNA variations set foundational blueprints for neurotransmitter receptors and neuroanatomy.",
         window: "Conception through entire lifespan (interacting with environmental epigenetic triggers).",
         impact: "Shapes baseline temperament traits, sensory processing limits, and biological predispositions."
-      },
-      Brain: {
-        mechanism: "Neural circuitry, synaptic density, and neurotransmitter availability (dopamine, serotonin).",
-        window: "Major structural surges in early childhood and adolescent synaptic pruning.",
-        impact: "Directly governs impulse control, cognitive speed, mood stability, and executive focus."
       },
       Hormones: {
         mechanism: "Endocrine signaling (cortisol, oxytocin, testosterone, estrogen) modulating neural activity.",
@@ -885,7 +930,7 @@
       Object.keys(influenceData).forEach((key, index) => {
         const chip = document.createElement('div');
         chip.className = `influence-chip ${index === 0 ? 'active' : ''}`;
-        chip.innerText = key;
+        chip.innerText = key.replace('_', ' ');
         chip.onclick = () => selectInfluence(key, chip);
         container.appendChild(chip);
       });
@@ -899,7 +944,7 @@
       if(element) element.classList.add('active');
 
       const data = influenceData[key];
-      document.getElementById('inf-title').innerText = key;
+      document.getElementById('inf-title').innerText = key.replace('_', ' ');
       document.getElementById('inf-desc').innerHTML = `
         <p style="margin-bottom: 0.8rem;"><strong>Biological/Social Mechanism:</strong> ${data.mechanism}</p>
         <p style="margin-bottom: 0.8rem;"><strong>Peak Developmental Window:</strong> ${data.window}</p>
